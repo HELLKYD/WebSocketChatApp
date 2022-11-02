@@ -46,6 +46,7 @@ func InitializeSession(ws *websocket.Conn, session *Session) {
 
 func validatePasswordAndUsername(data *db.User, username, password string, session *Session) {
 	if data.Username == username && data.Password == password {
+		session.Id = data.Id
 		sendSuccessMessages(username, session)
 	} else {
 		msg := Message{Content: "NOTLOGGEDIN", Sender: "System", SenderId: 0, Type: SYSTEMMESSAGE}
