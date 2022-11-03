@@ -13,7 +13,7 @@ type User struct {
 }
 
 type validTypes interface {
-	string | int
+	~string | ~int
 }
 
 var DB *sql.DB
