@@ -13,7 +13,7 @@ type User struct {
 }
 
 type validTypes interface {
-	~string | ~int
+	~string | ~int | ~bool
 }
 
 var DB *sql.DB
@@ -43,4 +43,8 @@ func retrieveData[T validTypes](columnName string, value T) *User {
 	data := DB.QueryRow(fmt.Sprintf("SELECT * FROM users WHERE %v='%v';", columnName, value))
 	data.Scan(&user.Id, &user.Username, &user.Password, &user.Connected)
 	return &user
+}
+
+func UpdateValueOfUser[T validTypes](column string, newValue T, userId int) {
+	DB.Exec(fmt.Sprintf("UPDATE users SET %v = %v WHERE id = %v;", column, newValue, userId))
 }

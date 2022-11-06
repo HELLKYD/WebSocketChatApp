@@ -47,6 +47,7 @@ func InitializeSession(ws *websocket.Conn, session *Session) {
 func validatePasswordAndUsername(data *db.User, username, password string, session *Session) {
 	if data.Username == username && data.Password == password {
 		session.Id = data.Id
+		db.UpdateValueOfUser("connected", true, data.Id)
 		sendSuccessMessages(username, session)
 	} else {
 		msg := Message{Content: "NOTLOGGEDIN", Sender: "System", SenderId: 0, Type: SYSTEMMESSAGE}
@@ -103,6 +104,7 @@ func createCloseHandlerFor(s Session) func(code int, text string) error {
 	return func(code int, text string) error {
 		if i := getIndexOfSession(ConnectedUsers, s); i != NOSESSIONFOUND && (code == websocket.CloseGoingAway || code == websocket.CloseNoStatusReceived) {
 			ConnectedUsers = updateConnectedUsers(ConnectedUsers, i)
+			db.UpdateValueOfUser("connected", false, s.Id)
 			fmt.Printf("sessions: %v\n", ConnectedUsers)
 		}
 		return nil
@@ -149,6 +151,7 @@ func deleteConnectionIfClosed(msgToSend Message, index int, c Session) {
 	if err := c.Connection.WriteJSON(msgToSend); err == websocket.ErrCloseSent {
 		log.Println(err)
 		ConnectedUsers = updateConnectedUsers(ConnectedUsers, index)
+		db.UpdateValueOfUser("connected", false, c.Id)
 	}
 }
 
@@ -172,6 +175,7 @@ func sendPingMessageTo(c *websocket.Conn) error {
 
 func disconnectToClientConnection(c *websocket.Conn) {
 	log.Printf("Ping don't get response, disconnecting to %s", c.RemoteAddr())
+	db.UpdateValueOfUser("connected", false, getSessionOfConnection(ConnectedUsers, c).Id)
 	ConnectedUsers = updateConnectedUsers(ConnectedUsers, getIndexOfSession(ConnectedUsers, getSessionOfConnection(ConnectedUsers, c)))
 	_ = c.Close()
 	fmt.Printf("sessions: %v\n", ConnectedUsers)
