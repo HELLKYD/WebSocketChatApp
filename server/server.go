@@ -33,6 +33,8 @@ const (
 	NOSESSIONFOUND = -1
 )
 
+var ErrNoSessionFound = fmt.Errorf("could not find a session")
+
 var ConnectedUsers []Session = make([]Session, 0)
 
 func InitializeSession(ws *websocket.Conn, session *Session) {
@@ -105,7 +107,6 @@ func createCloseHandlerFor(s Session) func(code int, text string) error {
 		if i := getIndexOfSession(ConnectedUsers, s); i != NOSESSIONFOUND && (code == websocket.CloseGoingAway || code == websocket.CloseNoStatusReceived) {
 			ConnectedUsers = updateConnectedUsers(ConnectedUsers, i)
 			db.UpdateValueOfUser("connected", false, s.Id)
-			fmt.Printf("sessions: %v\n", ConnectedUsers)
 		}
 		return nil
 	}
@@ -161,11 +162,15 @@ func getSessionOfConnection(connectedUsers []Session, c *websocket.Conn) Session
 			return s
 		}
 	}
-	return Session{}
+	return Session{Id: -1}
 }
 
 func sendPingMessageTo(c *websocket.Conn) error {
-	log.Printf("pinging %v", getSessionOfConnection(ConnectedUsers, c).Name)
+	session := getSessionOfConnection(ConnectedUsers, c)
+	if session.Id == -1 {
+		return ErrNoSessionFound
+	}
+	log.Printf("pinging %v", session.Name)
 	err := c.WriteMessage(PINGMESSAGE, []byte("keepalive"))
 	if err != nil {
 		return err
@@ -178,7 +183,6 @@ func disconnectToClientConnection(c *websocket.Conn) {
 	db.UpdateValueOfUser("connected", false, getSessionOfConnection(ConnectedUsers, c).Id)
 	ConnectedUsers = updateConnectedUsers(ConnectedUsers, getIndexOfSession(ConnectedUsers, getSessionOfConnection(ConnectedUsers, c)))
 	_ = c.Close()
-	fmt.Printf("sessions: %v\n", ConnectedUsers)
 }
 
 func checkError(err error) {

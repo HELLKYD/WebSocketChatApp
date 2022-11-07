@@ -34,8 +34,6 @@ func setupURLRoutes() {
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
-	user := db.GetUserDataFromDatabaseBy("id", 0)
-	fmt.Printf("user: %v\n", user)
 	http.ServeFile(w, r, "./content/index.html")
 }
 
