@@ -76,7 +76,7 @@ func HandleSession(s Session) {
 		if err != nil {
 			return
 		}
-		log.Printf("%v: %v", s.Name, msg.Content)
+		log.Printf("Message by %v: %v", s.Name, msg.Content)
 		forwardMesage(msg)
 	}
 }
