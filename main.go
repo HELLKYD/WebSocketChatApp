@@ -34,6 +34,10 @@ func setupURLRoutes() {
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+	if areLoginDataParamsSet(r) {
+		http.SetCookie(w, &http.Cookie{Name: "logindata", Value: fmt.Sprintf("%v:%v", r.PostForm.Get("username"), r.PostForm.Get("password"))})
+	}
 	http.ServeFile(w, r, "./content/index.html")
 }
 
@@ -47,6 +51,10 @@ func websocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	server.InitializeSession(ws, &session)
 	server.ConnectedUsers = append(server.ConnectedUsers, session)
 	go server.HandleSession(session)
+}
+
+func areLoginDataParamsSet(r *http.Request) bool {
+	return r.PostForm.Get("username") != "" && r.PostForm.Get("password") != ""
 }
 
 func checkError(err error) {

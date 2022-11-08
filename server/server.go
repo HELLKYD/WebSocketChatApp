@@ -167,7 +167,7 @@ func getSessionOfConnection(connectedUsers []Session, c *websocket.Conn) Session
 
 func sendPingMessageTo(c *websocket.Conn) error {
 	session := getSessionOfConnection(ConnectedUsers, c)
-	if session.Id == -1 {
+	if session.Id == NOSESSIONFOUND {
 		return ErrNoSessionFound
 	}
 	log.Printf("pinging %v", session.Name)
