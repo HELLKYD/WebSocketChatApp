@@ -49,6 +49,7 @@ func websocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	checkError(err)
 	log.Printf("%v connected", session.Name)
 	server.InitializeSession(ws, &session)
+	server.SendJoinMessageForSession(&session)
 	server.ConnectedUsers = append(server.ConnectedUsers, session)
 	go server.HandleSession(session)
 }

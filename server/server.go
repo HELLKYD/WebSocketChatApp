@@ -23,6 +23,14 @@ type Message struct {
 	Type     int    `json:"type"`
 }
 
+type ErrNoSessionFound struct {
+	Where string
+}
+
+func (E ErrNoSessionFound) Error() string {
+	return fmt.Sprintf("Found no session in %v", E.Where)
+}
+
 const (
 	PINGMESSAGE   = 9
 	SYSTEMMESSAGE = iota
@@ -32,8 +40,6 @@ const (
 const (
 	NOSESSIONFOUND = -1
 )
-
-var ErrNoSessionFound = fmt.Errorf("could not find a session")
 
 var ConnectedUsers []Session = make([]Session, 0)
 
@@ -129,6 +135,11 @@ func forwardMesage(msg Message) {
 	}
 }
 
+func SendJoinMessageForSession(session *Session) {
+	forwardMesage(Message{Content: fmt.Sprintf("%v joined", session.Name),
+		Type: CHATMESSAGE, Sender: "System", SenderId: 0})
+}
+
 func updateConnectedUsers(connectedUsers []Session, index int) []Session {
 	newArray := make([]Session, 0)
 	for i := 0; i < len(connectedUsers); i++ {
@@ -168,7 +179,7 @@ func getSessionOfConnection(connectedUsers []Session, c *websocket.Conn) Session
 func sendPingMessageTo(c *websocket.Conn) error {
 	session := getSessionOfConnection(ConnectedUsers, c)
 	if session.Id == NOSESSIONFOUND {
-		return ErrNoSessionFound
+		return ErrNoSessionFound{Where: "ConnectedUsers"}
 	}
 	log.Printf("pinging %v", session.Name)
 	err := c.WriteMessage(PINGMESSAGE, []byte("keepalive"))
