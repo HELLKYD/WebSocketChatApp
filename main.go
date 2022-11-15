@@ -1,6 +1,7 @@
 package main
 
 import (
+	"chatApp/api"
 	"chatApp/db"
 	"chatApp/server"
 	"fmt"
@@ -31,6 +32,7 @@ func setupURLRoutes() {
 	http.Handle("/content/", http.StripPrefix("/content/", fileServer))
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/ws", websocketEndpoint)
+	http.HandleFunc("/api/connectedUsers", api.GetConnectedUsers)
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -51,7 +53,7 @@ func websocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	server.InitializeSession(ws, &session)
 	server.SendJoinMessageForSession(&session)
 	server.ConnectedUsers = append(server.ConnectedUsers, session)
-	go server.HandleSession(session)
+	server.HandleSession(session)
 }
 
 func areLoginDataParamsSet(r *http.Request) bool {

@@ -3,13 +3,14 @@ package db
 import (
 	"database/sql"
 	"fmt"
+	"log"
 )
 
 type User struct {
-	Id        int
-	Username  string
-	Password  string
-	Connected bool
+	Id        int    `json:"id"`
+	Username  string `json:"username"`
+	Password  string `json:"password,omitempty"`
+	Connected bool   `json:"connected,omitempty"`
 }
 
 type validTypes interface {
@@ -47,4 +48,19 @@ func retrieveData[T validTypes](columnName string, value T) *User {
 
 func UpdateValueOfUser[T validTypes](column string, newValue T, userId int) {
 	DB.Exec(fmt.Sprintf("UPDATE users SET %v = %v WHERE id = %v;", column, newValue, userId))
+}
+
+func GetConnectedUsers() []User {
+	users := make([]User, 0)
+	data, err := DB.Query("SELECT id, username FROM users WHERE connected = true;")
+	if err != nil {
+		log.Println("Error while retrieving data about the connected users")
+		return users
+	}
+	for data.Next() {
+		user := User{}
+		data.Scan(&user.Id, &user.Username)
+		users = append(users, user)
+	}
+	return users
 }
