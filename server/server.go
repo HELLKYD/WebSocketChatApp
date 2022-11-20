@@ -4,6 +4,7 @@ import (
 	"chatApp/db"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 	"time"
 
@@ -194,6 +195,10 @@ func disconnectToClientConnection(c *websocket.Conn) {
 	db.UpdateValueOfUser("connected", false, getSessionOfConnection(ConnectedUsers, c).Id)
 	ConnectedUsers = updateConnectedUsers(ConnectedUsers, getIndexOfSession(ConnectedUsers, getSessionOfConnection(ConnectedUsers, c)))
 	_ = c.Close()
+}
+
+func AreLoginDataParamsSet(r *http.Request) bool {
+	return r.PostForm.Get("username") != "" && r.PostForm.Get("password") != ""
 }
 
 func checkError(err error) {
