@@ -22,7 +22,7 @@ var DB *sql.DB
 var IsDatabaseInitialized = false
 
 func OpenConnectionToDatabase() {
-	temp_db, err := sql.Open("sqlite", "./test.db")
+	temp_db, err := sql.Open("sqlite", "./users.db")
 	if err != nil {
 		panic(err)
 	}
