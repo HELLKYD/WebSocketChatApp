@@ -3,6 +3,7 @@ package server
 import (
 	"chatApp/db"
 	"fmt"
+	"hash/fnv"
 	"log"
 	"net/http"
 	"strings"
@@ -49,11 +50,18 @@ func InitializeSession(ws *websocket.Conn, session *Session) {
 	checkError(err)
 	message := string(p)
 	username, password, _ := strings.Cut(message, ":")
+	hashedPassword := GenerateHashForPassword(password)
 	data := db.GetUserDataFromDatabaseBy("username", username)
-	validatePasswordAndUsername(data, username, password, session)
+	validatePasswordAndUsername(data, username, hashedPassword, session)
 }
 
-func validatePasswordAndUsername(data *db.User, username, password string, session *Session) {
+func GenerateHashForPassword(password string) uint32 {
+	hashFunction := fnv.New32a()
+	hashFunction.Write([]byte(password))
+	return hashFunction.Sum32()
+}
+
+func validatePasswordAndUsername(data *db.User, username string, password uint32, session *Session) {
 	if data.Username == username && data.Password == password {
 		session.Id = data.Id
 		db.UpdateValueOfUser("connected", true, data.Id)

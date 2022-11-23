@@ -9,7 +9,7 @@ import (
 type User struct {
 	Id        int    `json:"id"`
 	Username  string `json:"username"`
-	Password  string `json:"password,omitempty"`
+	Password  uint32 `json:"password,omitempty"`
 	Connected bool   `json:"connected,omitempty"`
 }
 
