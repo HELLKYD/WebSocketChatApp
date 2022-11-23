@@ -45,8 +45,8 @@ const (
 
 var ConnectedUsers []Session = make([]Session, 0)
 
-func InitializeSession(ws *websocket.Conn, session *Session) {
-	_, p, err := ws.ReadMessage()
+func InitializeSession(session *Session) {
+	_, p, err := session.Connection.ReadMessage()
 	checkError(err)
 	message := string(p)
 	username, password, _ := strings.Cut(message, ":")

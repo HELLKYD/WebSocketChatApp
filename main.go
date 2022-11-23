@@ -50,7 +50,11 @@ func websocketEndpoint(w http.ResponseWriter, r *http.Request) {
 	currentUserId++
 	checkError(err)
 	log.Printf("%v connected", session.Name)
-	server.InitializeSession(ws, &session)
+	handleSession(session)
+}
+
+func handleSession(session server.Session) {
+	server.InitializeSession(&session)
 	server.SendJoinMessageForSession(&session)
 	server.ConnectedUsers = append(server.ConnectedUsers, session)
 	server.HandleSession(session)
