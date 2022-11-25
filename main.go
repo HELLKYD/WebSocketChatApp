@@ -33,6 +33,7 @@ func setupURLRoutes() {
 	http.HandleFunc("/", homePage)
 	http.HandleFunc("/ws", websocketEndpoint)
 	http.HandleFunc("/api/connectedUsers", api.GetConnectedUsers)
+	http.HandleFunc("/admin", adminDashboard)
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
@@ -58,6 +59,10 @@ func handle(session server.Session) {
 	server.SendJoinMessageForSession(&session)
 	server.ConnectedUsers = append(server.ConnectedUsers, session)
 	server.HandleSession(session)
+}
+
+func adminDashboard(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./content/admin.html")
 }
 
 func checkError(err error) {

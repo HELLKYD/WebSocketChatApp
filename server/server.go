@@ -110,6 +110,8 @@ func keepConnectionAlive(c *websocket.Conn, timeout time.Duration) {
 			}
 			time.Sleep(timeout / 2)
 			if time.Since(lastResponse) > timeout {
+				session := getSessionOfConnection(ConnectedUsers, c)
+				SendLeftMessageForSession(&session)
 				disconnectToClientConnection(c)
 				return
 			}
@@ -120,6 +122,7 @@ func keepConnectionAlive(c *websocket.Conn, timeout time.Duration) {
 func createCloseHandlerFor(s Session) func(code int, text string) error {
 	return func(code int, text string) error {
 		if i := getIndexOfSession(ConnectedUsers, s); i != NOSESSIONFOUND && (code == websocket.CloseGoingAway || code == websocket.CloseNoStatusReceived) {
+			SendLeftMessageForSession(&s)
 			ConnectedUsers = updateConnectedUsers(ConnectedUsers, i)
 			db.UpdateValueOfUser("connected", false, s.Id)
 		}
@@ -147,6 +150,12 @@ func forwardMesage(msg Message) {
 func SendJoinMessageForSession(session *Session) {
 	forwardMesage(Message{Content: fmt.Sprintf("%v joined", session.Name),
 		Type: CHATMESSAGE, Sender: "System", SenderId: 0})
+}
+
+func SendLeftMessageForSession(session *Session) {
+	leftMsg := Message{Content: fmt.Sprintf("%v left", session.Name),
+		Sender: "System", SenderId: 0, Type: CHATMESSAGE}
+	forwardMesage(leftMsg)
 }
 
 func updateConnectedUsers(connectedUsers []Session, index int) []Session {
