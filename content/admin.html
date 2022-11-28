@@ -7,10 +7,15 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'>
 
 <body>
-    <div class="w3-container">
-        <h2 class="w3-center">Connected Users</h2>
-        <table class="w3-table-all w3-centered" id="connectedUsers">
+    <div class='w3-container'>
+        <h2 class='w3-center'>Connected Users</h2>
+        <table class='w3-table-all w3-centered' id='connectedUsers'>
         </table>
+    </div>
+    <div>
+        <input type="text" id="userInput">
+        <input type="password" id="passwordInput">
+        <button onclick="login()" id="submitButton">Submit</button>
     </div>
     <script src='/content/assets/adminDashboard.js'></script>
 </body>

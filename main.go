@@ -34,6 +34,7 @@ func setupURLRoutes() {
 	http.HandleFunc("/ws", websocketEndpoint)
 	http.HandleFunc("/api/connectedUsers", api.GetConnectedUsers)
 	http.HandleFunc("/admin", adminDashboard)
+	http.HandleFunc("/api/verifyUserLoginData/", api.VerifyUserLoginData)
 }
 
 func homePage(w http.ResponseWriter, r *http.Request) {
