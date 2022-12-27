@@ -30,7 +30,7 @@ const Client: Component<{ username: string, password: string }> = (props) => {
 
     let messageId = 1;
     const [currentMessage, setCurrentMessage] = createSignal<string>("");
-    const [websocketConnection] = createSignal<WebSocket>(new WebSocket("ws://192.168.178.37/ws"));
+    const [websocketConnection] = createSignal<WebSocket>(new WebSocket("ws://thatonedev.de/ws"));
     console.log("Attempting Connection");
 
     websocketConnection().onopen = () => {

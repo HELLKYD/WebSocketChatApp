@@ -6,7 +6,7 @@ const LoginHtml: Component = () => {
         <>
             <h1 id="header" class="w3-center"></h1>
             <div class="w3-content w3-container">
-                <form action="http://192.168.178.37/" method="post">
+                <form action="http://thatonedev.de/" method="post">
                     <input type="text" placeholder="Enter Username" class="w3-input w3-round" id="username" name="username"/>
                     <br />
                     <input type="password" placeholder="Enter Password" class="w3-input w3-round" id="password" name="password"/>
