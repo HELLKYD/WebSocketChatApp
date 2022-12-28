@@ -19,7 +19,7 @@ function startDataCollection() {
 }
 
 async function verifyLogin(username, password) {
-    let url = "http://thatonedev.de/api/verifyUserLoginData/?loginData=".concat(username + ":" + password);
+    let url = "https://thatonedev.de/api/verifyUserLoginData/?loginData=".concat(username + ":" + password);
     let response = await fetch(url);
     let responseJson = await response.json();
     if(responseJson.isValid) {

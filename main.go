@@ -24,7 +24,7 @@ func main() {
 	db.OpenConnectionToDatabase()
 	db.IsDatabaseInitialized = true
 	setupURLRoutes()
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServeTLS(":443", "localhost.crt", "localhost.key", nil))
 }
 
 func setupURLRoutes() {
