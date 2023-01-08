@@ -8,7 +8,7 @@
 <body class="w3-light-blue" id="root">
     <script src="/content/assets/main.js"></script>
     <script>
-        let w = new Worker("/content/fetchConnectedUsers.js");
+        let w = new Worker("/content/assets/fetchConnectedUsers.js");
         w.onmessage = ev => {
             let message = ev.data;
             let list = document.getElementById("connectedUsers");
