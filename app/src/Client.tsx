@@ -44,7 +44,7 @@ const Client: Component<{ username: string, password: string }> = (props) => {
     };
 
     document.addEventListener('keyup', (event: KeyboardEvent) => {
-        if (event.keyCode == 13) {
+        if (event.key == "Enter") {
             console.log("pressed enter key")
             let message = getMessageInput();
             sendMessage(message);

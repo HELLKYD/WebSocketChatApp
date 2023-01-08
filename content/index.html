@@ -1,18 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-<style>
-  .slides {display: none;}
-</style>
+<html>
+<meta charset='utf-8'>
 <title>Home</title>
-
-<script type="module" crossorigin src="/content/assets/index.b7ca1284.js"></script>
+<meta name='viewport' content='width=device-width, initial-scale=1'>
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 
 <body class="w3-light-blue" id="root">
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  
+    <script src="/content/assets/main.js"></script>
+    <script>
+        let w = new Worker("/content/fetchConnectedUsers.js");
+        w.onmessage = ev => {
+            let message = ev.data;
+            let list = document.getElementById("connectedUsers");
+            list.innerHTML = "";
+            for (let i = 0; i < message.length; i++) {
+                let userData = message[i].split(":");
+                let id = userData[0];
+                let username = userData[1];
+                list.innerHTML += "<li id=\"" + id + "\">" + username + "</li>";
+            }
+        };
+    </script>
 </body>
 
 </html>
